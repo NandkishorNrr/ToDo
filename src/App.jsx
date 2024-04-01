@@ -8,7 +8,10 @@ function App() {
   const [todos, setTodos] = useState([]);
 
   const addTodo = (todo) => {
-    setTodos((prev) => [{ id: Date.now, completed: false, ...todo }, ...prev]);
+    setTodos((prev) => [
+      { id: Date.now(), completed: false, ...todo },
+      ...prev,
+    ]); // Corrected Date.now() function call
   };
 
   const updateTodo = (id, todo) => {
@@ -18,8 +21,9 @@ function App() {
   };
 
   const deleteTodo = (id) => {
-    setTodos((prev) => prev.filter((todo) => todo.id != id));
+    setTodos((prev) => prev.filter((todo) => todo.id !== id)); // Changed from != to !==
   };
+
   const toggleComplete = (id) => {
     setTodos((prev) =>
       prev.map((prevTodo) =>
@@ -31,9 +35,9 @@ function App() {
   };
 
   useEffect(() => {
-    const todos = JSON.parse(localStorage.getItem("todos"));
+    const storedTodos = JSON.parse(localStorage.getItem("todos"));
 
-    if (todos && todos.length > 0) setTodos(todos);
+    if (storedTodos && storedTodos.length > 0) setTodos(storedTodos);
   }, []);
 
   useEffect(() => {
@@ -50,18 +54,33 @@ function App() {
         toggleComplete,
       }}
     >
-      <div className="bg-[#172842] min-h-screen py-8">
-        <div className="w-full max-w-2xl mx-auto shadow-md rounded-lg px-4 py-3 text-white">
-          <h1 className="text-2xl font-bold text-center mb-8 mt-2">
-            <TodoForm />
+      <div className="bg-gray-600 h-90vh max-h-full rounded-lg px-6 py-4">
+        <div className="w-80 w-max bg-gray-100 dark:bg-gray-700 shadow-md rounded-lg px-6 py-4">
+          <h1 className="text-2xl font-bold text-center mb-8 mt-2 text-gray-800 dark:text-gray-200">
+            Todo App
           </h1>
-          <div className="mb-4">{/* Todo form goes here */}</div>
-          <div className="flex flex-wrap gap-y-3">
-            {todos.map((todo) => (
-              <div key={todo.id} className="w-full">
-                <TodoItem todo={todo} />
-              </div>
-            ))}
+          <div className="mb-4">
+            <TodoForm />
+          </div>
+          <hr />
+          <br />
+          <div
+            className="overflow-y-auto h-96 rounded-lg"
+            style={{ maxHeight: "calc(90vh - 8rem)" }}
+          >
+            <div className="px-2">
+              {todos.length === 0 ? (
+                <p className="text-center text-gray-600 dark:text-gray-300">
+                  No todos yet
+                </p>
+              ) : (
+                todos.map((todo) => (
+                  <div key={todo.id} className="mb-2">
+                    <TodoItem todo={todo} />
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>
